@@ -10,3 +10,9 @@ EchoMaze is a web-based accessibility application that enables visually impaired
 - Web Audio API
 - Web Speech API
 - MongoDB/Firebase
+
+##Team Members
+-Arshiya Sulfikkar
+-Muhammed Aman Ibnu jalal
+-Khaiz Mohammed DK
+-Ziya Fathima Saheed
