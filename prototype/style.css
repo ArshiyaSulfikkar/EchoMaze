@@ -1,0 +1,45 @@
+:root {
+  color-scheme: dark;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  background: #101318;
+  color: #e8edf2;
+}
+
+.page-shell {
+  text-align: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.7rem;
+}
+
+p {
+  margin: 0.3rem 0 1rem;
+  color: #aab6c2;
+}
+
+#game-container {
+  width: 640px;
+  max-width: calc(100vw - 2rem);
+  margin: 0 auto;
+  border: 2px solid #33414f;
+  box-shadow: 0 12px 34px rgb(0 0 0 / 35%);
+}
+
+#game-container canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+}
