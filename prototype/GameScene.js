@@ -27,6 +27,8 @@ class GameScene extends Phaser.Scene {
     ];
 
     this.drawMaze();
+    // player state: tile coordinates (col,row) plus direction/checkpoint/completion
+    this.state = { x: this.playerPosition.col, y: this.playerPosition.row, direction: 1, checkpoint: -1, completed: false };
     this.createPlayer();
     this.initializeAudio();
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -72,7 +74,14 @@ class GameScene extends Phaser.Scene {
   }
 
   createPlayer() {
-    this.player = this.add.rectangle(0, 0, this.tileSize - 10, this.tileSize - 10, 0x2878d4);
+    // Draw a triangle-shaped player so it reads well with spatial cues.
+    const size = this.tileSize - 10;
+    const half = size / 2;
+    // Points are relative to the triangle origin: top, bottom-right, bottom-left
+    this.player = this.add
+      .triangle(0, 0, 0, -half, half, half, -half, half, 0x63e6be)
+      .setOrigin(0.5)
+      .setDepth(10);
     this.player.setStrokeStyle(2, 0xb8dcff);
     this.updatePlayerVisual();
   }
@@ -108,6 +117,11 @@ class GameScene extends Phaser.Scene {
     const x = this.mazeOffsetX + this.playerPosition.col * this.tileSize + this.tileSize / 2;
     const y = this.mazeOffsetY + this.playerPosition.row * this.tileSize + this.tileSize / 2;
     this.player.setPosition(x, y);
+    // Keep the simple state object in sync with tile coordinates
+    if (this.state) {
+      this.state.x = this.playerPosition.col;
+      this.state.y = this.playerPosition.row;
+    }
   }
 
   completeMaze() {
