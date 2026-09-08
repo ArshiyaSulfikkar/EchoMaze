@@ -1,13 +1,4 @@
 # EchoMaze Foundation
-
-This is Arshiya's Phase 2 technical foundation for EchoMaze. It deliberately contains no spatial audio, speech, deployment work, database, leaderboard, or voice recognition.
-
-## Run it
-
-Serve this folder using any static web server, then open the local URL in a current browser. For example, from this folder run `python -m http.server 8000`, then visit `http://localhost:8000`.
-
-Phaser is loaded from the jsDelivr CDN, so the first run needs an internet connection.
-
 ## Controls
 
 - Up arrow: move forward
@@ -33,4 +24,4 @@ The supplied concept drawing did not contain machine-readable grid coordinates. 
 
 ## Known limitation
 
-The current checkpoint rule uses distance from the start. It is correct for this deliberately single-route maze. If the team later switches to a maze with loops, replace it with explicit checkpoint-gate edges.
+The current checkpoint rule uses distance from the start. It is correct for this deliberately single-route maze. If the team later switches to a maze with loops, it can be replaced with  explicit checkpoint-gate edges.
