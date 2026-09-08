@@ -1,23 +1,34 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EchoMaze Phaser Prototype</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EchoMaze Foundation</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="page-shell">
-      <header>
-        <h1>EchoMaze</h1>
-        <p>Phaser 3 navigation prototype</p>
-      </header>
-      <div id="game-container" aria-label="EchoMaze game canvas"></div>
+    <main>
+      <section class="intro">
+        <p class="eyebrow">EchoMaze MVP</p>
+        <h1>Maze foundation</h1>
+        <p>Use the arrow keys to move and turn. Press <kbd>R</kbd> to restart; press <kbd>I</kbd>, or hold Up + Down, to hear your orientation in the event log.</p>
+      </section>
+      <section class="game-shell" aria-label="EchoMaze game">
+        <div id="game" aria-label="Maze board"></div>
+        <aside aria-live="polite">
+          <h2>Game status</h2>
+          <dl>
+            <div><dt>Position</dt><dd id="position">-</dd></div>
+            <div><dt>Facing</dt><dd id="facing">-</dd></div>
+            <div><dt>Checkpoint</dt><dd id="checkpoint">None</dd></div>
+          </dl>
+          <h2>Latest event</h2>
+          <p id="event">Loading maze...</p>
+          <p class="note">Audio and speech are deliberately not implemented in this phase. The event contract is ready for the audio layer.</p>
+        </aside>
+      </section>
     </main>
-
-    <!-- Phaser is the only external library used by this prototype. -->
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.90.0/dist/phaser.min.js"></script>
-    <script src="GameScene.js"></script>
-    <script src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+    <script src="game.js"></script>
   </body>
 </html>
