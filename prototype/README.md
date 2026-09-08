@@ -1,62 +1,36 @@
-# EchoMaze — Phaser 3 Prototype
+# EchoMaze Foundation
 
-A deliberately small browser prototype for evaluating Phaser 3 for EchoMaze. It demonstrates a rendered 2D maze, tile-based keyboard movement, wall collision, exit handling, and Phaser scene structure. It is not a complete game.
+This is Arshiya's Phase 2 technical foundation for EchoMaze. It deliberately contains no spatial audio, speech, deployment work, database, leaderboard, or voice recognition.
 
-## Folder structure
+## Run it
 
-```text
-.
-├── assets/          # Reserved for future audio files
-├── GameScene.js     # Maze rendering, player movement, and completion logic
-├── index.html       # Page and Phaser script loading
-├── main.js          # Phaser game configuration
-└── style.css        # Dark page and canvas styling
-```
+Serve this folder using any static web server, then open the local URL in a current browser. For example, from this folder run `python -m http.server 8000`, then visit `http://localhost:8000`.
 
-## Installation
-
-1. Download or clone this folder.
-2. Open the folder in Visual Studio Code.
-3. Install the **Live Server** VS Code extension if it is not already installed.
-
-Phaser is loaded from a CDN, so an internet connection is required the first time the page loads.
-
-## Run with VS Code Live Server
-
-1. In VS Code, open `index.html`.
-2. Right-click the file and choose **Open with Live Server**, or use the **Go Live** button in the status bar.
-3. The prototype opens in your browser on a local address such as `http://127.0.0.1:5500`.
+Phaser is loaded from the jsDelivr CDN, so the first run needs an internet connection.
 
 ## Controls
 
-Use the arrow keys to move the blue player square one tile per key press. Black tiles are walls, light-gray tiles are floor, and the green tile is the exit.
+- Up arrow: move forward
+- Down arrow: move backward
+- Left/right arrow: rotate 90 degrees
+- R: restart at the start, facing east
+- I, or Up + Down held together: orientation query
 
-## Features implemented
+## Frozen implementation decisions
 
-- Phaser 3 scene architecture
-- 640 × 480 dark game canvas
-- 10 × 10 array-defined maze rendered with colored rectangles
-- Tile-based arrow-key movement
-- Wall collision checks
-- Completion message and disabled input after reaching the exit
-- Optional Phaser Audio Manager support for movement and completion cues
-- Comments marking Web Audio API integration points
+The supplied concept drawing did not contain machine-readable grid coordinates. This implementation turns it into a single-width, grid-based maze. The top entrance is the start, facing east; the bottom exit is the goal. The six numbered points are checkpoints. Reaching a checkpoint prevents travel to cells earlier than that checkpoint.
 
-## Audio support
+## Event contract for the audio layer
 
-The scene loads audio with Phaser's built-in Audio Manager during `preload()` and creates sound objects in `create()`. Put the following WAV files in `assets/audio/`:
+`window.mazeEvents` is a Phaser EventEmitter. Subscribe with `window.mazeEvents.on(eventName, callback)`.
 
-```text
-assets/audio/step.wav     # Plays after each successful tile move
-assets/audio/success.wav  # Plays once after reaching the green exit
-```
+| Event | When emitted | Payload |
+| --- | --- | --- |
+| `playerMoved` | successful movement, rotation, or restart | `{ action, x, y, facing, checkpoint }` |
+| `collision` | wall or active checkpoint blocks movement | `{ action, x, y, facing, checkpoint }` |
+| `checkpointReached` | player enters a new checkpoint | `{ action, x, y, facing, checkpoint }` |
+| `goalReached` | player reaches the goal | `{ action, x, y, facing, checkpoint }` |
 
-Audio is intentionally optional: if either file is missing or cannot load, the maze still runs and the unavailable cue is skipped. This validates Phaser's basic audio-loading and sound-playback workflow alongside EchoMaze's rendering, keyboard navigation, collision detection, and scene management. TODO comments in `GameScene.js` mark the next accessibility experiments: directional cues, distance-based volume, and voice guidance using the Web Audio API.
+## Known limitation
 
-## Future improvements
-
-- Supply `step.wav` and `success.wav` assets, then tune their levels
-- Experiment with spatial audio cues for maze navigation
-- Generate mazes procedurally
-- Add restart, timer, accessibility, and mobile controls
-- Load real visual and audio assets from `assets/`
+The current checkpoint rule uses distance from the start. It is correct for this deliberately single-route maze. If the team later switches to a maze with loops, replace it with explicit checkpoint-gate edges.

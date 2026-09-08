@@ -1,0 +1,19 @@
+:root { color-scheme: dark; font-family: Inter, system-ui, sans-serif; background: #10151f; color: #f4f7fb; }
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+main { max-width: 1100px; margin: 0 auto; padding: 38px 24px 56px; }
+.eyebrow { margin: 0; color: #80d7c2; font-size: .8rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+h1 { margin: 5px 0 8px; font-size: clamp(2rem, 5vw, 3.6rem); letter-spacing: -.04em; }
+.intro > p:last-child { max-width: 720px; color: #b9c4d4; line-height: 1.6; }
+kbd { padding: 2px 6px; border: 1px solid #58677d; border-radius: 4px; background: #1c2737; font: inherit; }
+.game-shell { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 18px; align-items: start; margin-top: 28px; }
+#game { overflow: hidden; min-height: 500px; border: 1px solid #35475f; border-radius: 12px; background: #071119; box-shadow: 0 16px 50px #0006; }
+canvas { display: block; max-width: 100%; height: auto !important; }
+aside { padding: 18px; border: 1px solid #35475f; border-radius: 12px; background: #162130; }
+h2 { margin: 0 0 12px; font-size: 1rem; }
+dl { margin: 0 0 24px; }
+dl div { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid #314158; }
+dt { color: #aebdd0; } dd { margin: 0; font-weight: 700; text-transform: capitalize; }
+#event { margin: 0; min-height: 52px; color: #80d7c2; line-height: 1.5; }
+.note { margin: 22px 0 0; color: #aebdd0; font-size: .85rem; line-height: 1.5; }
+@media (max-width: 760px) { main { padding: 24px 14px; } .game-shell { grid-template-columns: 1fr; } #game { min-height: 0; } }
