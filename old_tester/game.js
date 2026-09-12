@@ -3,18 +3,18 @@ const mazeEvents = new Phaser.Events.EventEmitter();
 
 const MAZE = [
   '#####################',
-  '#S..................#',
-  '###################.#',
-  '#...................#',
-  '#.###################',
-  '#...................#',
-  '###################.#',
-  '#...................#',
-  '#.###################',
-  '#...................#',
-  '###################.#',
-  '#...................#',
-  '#.###################',
+  '#S......#...........#',
+  '#######.#.#########.#',
+  '#.......#.#.......#.#',
+  '#.#######.#.#####.#.#',
+  '#.#.......#.....#.#.#',
+  '#.#.#############.#.#',
+  '#.#...............#.#',
+  '#.###############.#.#',
+  '#.................#.#',
+  '#################.#.#',
+  '#.................#.#',
+  '#.#################.#',
   '#..................G#',
   '#####################',
 ];
@@ -28,11 +28,11 @@ const DIRECTIONS = [
 ];
 const CHECKPOINTS = [
   { x: 4, y: 1, label: 'Checkpoint 1' },
-  { x: 16, y: 1, label: 'Checkpoint 2' },
-  { x: 14, y: 3, label: 'Checkpoint 3' },
-  { x: 5, y: 5, label: 'Checkpoint 4' },
+  { x: 7, y: 3, label: 'Checkpoint 2' },
+  { x: 7, y: 5, label: 'Checkpoint 3' },
+  { x: 3, y: 7, label: 'Checkpoint 4' },
   { x: 10, y: 9, label: 'Checkpoint 5' },
-  { x: 7, y: 13, label: 'Checkpoint 6' },
+  { x: 17, y: 11, label: 'Checkpoint 6' },
 ];
 
 const gameWidth = MAZE[0].length * TILE;
@@ -55,46 +55,106 @@ new Phaser.Game({
 function create() {
   const scene = this;
   const state = { x: start.x, y: start.y, direction: 1, checkpoint: -1, completed: false };
-  const player = scene.add.triangle(0, 0, 0, 26, 22, 13, 0, 0, 0x63e6be).setOrigin(.5);
   drawMaze(scene);
+  // Draw the player after the maze so it remains visible above floor and wall tiles.
+  const player = scene.add.triangle(0, 0, 0, 26, 22, 13, 0, 0, 0x63e6be).setOrigin(.5).setDepth(10);
   refresh();
 
-  const keys = scene.input.keyboard.addKeys({ up: 'UP', down: 'DOWN', left: 'LEFT', right: 'RIGHT', restart: 'R', info: 'I' });
-  scene.input.keyboard.on('keydown', (event) => {
-    if (event.code === 'KeyR') return restart();
-    if (event.code === 'KeyI' || (keys.up.isDown && keys.down.isDown)) return orientationQuery();
-    if (state.completed) return;
-    if (event.code === 'ArrowLeft') turn(-1);
-    if (event.code === 'ArrowRight') turn(1);
-    if (event.code === 'ArrowUp') move(1);
-    if (event.code === 'ArrowDown') move(-1);
-  });
+  const keys = scene.input.keyboard.addKeys({
+  up: 'UP',
+  down: 'DOWN',
+  left: 'LEFT',
+  right: 'RIGHT',
+  restart: 'R',
+  info: 'I'
+});
 
-  function turn(amount) {
-    state.direction = (state.direction + amount + 4) % 4;
-    mazeEvents.emit('playerMoved', snapshot('turn'));
-    refresh(`Turned ${DIRECTIONS[state.direction].name}.`);
+scene.input.keyboard.on('keydown', (event) => {
+
+  // Restart
+  if (event.code === 'KeyR') {
+    restart();
+    return;
   }
 
-  function move(amount) {
-    const direction = DIRECTIONS[(state.direction + (amount < 0 ? 2 : 0)) % 4];
-    const next = { x: state.x + direction.x, y: state.y + direction.y };
-    if (isWall(next) || isBehindCheckpoint(next)) {
-      mazeEvents.emit('collision', snapshot('blocked'));
-      refresh(isBehindCheckpoint(next) ? 'The active checkpoint blocks the path behind you.' : 'Wall ahead.');
-      return;
-    }
-    state.x = next.x; state.y = next.y;
-    mazeEvents.emit('playerMoved', snapshot('move'));
-    activateCheckpoint();
-    if (state.x === goal.x && state.y === goal.y) {
-      state.completed = true;
-      mazeEvents.emit('goalReached', snapshot('goal'));
-      refresh('Goal reached. Maze completed!');
-      return;
-    }
-    refresh('Path clear.');
+  // Orientation
+  if (event.code === 'KeyI') {
+    orientationQuery();
+    return;
   }
+
+  if (state.completed) return;
+
+  // Arrow keys move AND rotate the arrow
+  if (event.code === 'ArrowUp') {
+    moveInDirection(0, -1, 'north');
+  }
+
+  else if (event.code === 'ArrowDown') {
+    moveInDirection(0, 1, 'south');
+  }
+
+  else if (event.code === 'ArrowLeft') {
+    moveInDirection(-1, 0, 'west');
+  }
+
+  else if (event.code === 'ArrowRight') {
+    moveInDirection(1, 0, 'east');
+  }
+
+});
+
+  
+
+ function moveInDirection(dx, dy, facing) {
+
+  const next = {
+    x: state.x + dx,
+    y: state.y + dy
+  };
+
+  // Rotate arrow toward movement direction
+  const directionIndex = DIRECTIONS.findIndex(
+    direction => direction.name === facing
+  );
+
+  state.direction = directionIndex;
+
+  // Wall check
+  if (isWall(next)) {
+    mazeEvents.emit('collision', snapshot('blocked'));
+    refresh('Wall ahead.');
+    return;
+  }
+
+  // Checkpoint restriction
+  if (isBehindCheckpoint(next)) {
+    mazeEvents.emit('collision', snapshot('blocked'));
+    refresh('The active checkpoint blocks the path behind you.');
+    return;
+  }
+
+  // Move one grid cell
+  state.x = next.x;
+  state.y = next.y;
+
+  mazeEvents.emit('playerMoved', snapshot('move'));
+
+  activateCheckpoint();
+
+  // Goal
+  if (state.x === goal.x && state.y === goal.y) {
+    state.completed = true;
+
+    mazeEvents.emit('goalReached', snapshot('goal'));
+
+    refresh('Goal reached. Maze completed!');
+
+    return;
+  }
+
+  refresh(`Moved ${facing}.`);
+}
 
   function activateCheckpoint() {
     const index = CHECKPOINTS.findIndex((point) => point.x === state.x && point.y === state.y);
